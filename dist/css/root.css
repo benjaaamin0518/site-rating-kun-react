@@ -1,0 +1,9 @@
+.ratingCard {
+  width: 320px !important;
+}
+.siteRatingSearch {
+  width: 100%;
+}
+.siteRatingSearch > input {
+  border-radius: 50px !important;
+}

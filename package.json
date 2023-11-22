@@ -1,0 +1,30 @@
+{
+  "name": "site-rating-kun-react",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "develop": "tsc && vite build --emptyOutDir -w",
+    "build": "tsc && vite build --emptyOutDir"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-transition-group": "^4.4.5",
+    "semantic-ui-css": "^2.5.0",
+    "semantic-ui-react": "^2.1.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.6.0",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@types/react-transition-group": "^4.4.9",
+    "@vitejs/plugin-react-swc": "^3.3.2",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
+  }
+}

@@ -1,29 +1,23 @@
-import UpdatingMsg from './components/UpdatingMsg'
-import React from 'react'
-import SiteRatingContextProvider from './contexts/SiteRatingContext'
-import SucceedMsg from './components/SucceedMsg'
+import React, { useContext } from 'react'
+import DetailMsg from './components/DetailMsg'
 import SiteRatingCard from './components/SiteRatingCard'
 import SiteRatingForm from './components/SiteRatingForm'
-import DetailMsg from './components/DetailMsg'
 import SiteRatingSearch from './components/SiteRatingSearch'
+import SucceedMsg from './components/SucceedMsg'
+import UpdatingMsg from './components/UpdatingMsg'
+import { SiteRatingContext } from './contexts/SiteRatingContext'
 const App = () => {
+  const siteRatingContext = useContext(SiteRatingContext)
+  console.log(siteRatingContext.currentCardExtOption)
   return (
-    <SiteRatingContextProvider>
+    <>
       <UpdatingMsg />
       <SucceedMsg />
-      <SiteRatingCard
-        option={{
-          title: 'test',
-          url: 'test',
-          date: new Date(),
-          rating: '4',
-          isCurrentUrl: true
-        }}
-      />
+      <SiteRatingCard {...siteRatingContext.currentCardExtOption} />
       <SiteRatingForm />
       <DetailMsg />
       <SiteRatingSearch />
-    </SiteRatingContextProvider>
+    </>
   )
 }
 export default App

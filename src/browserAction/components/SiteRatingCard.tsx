@@ -1,12 +1,16 @@
-import { cardExtOptionType } from 'browserAction/contexts/SiteRatingContext'
-import { Card, Rating } from 'semantic-ui-react'
 import React from 'react'
-import SiteRatingCardButton from './SiteRatingCardButton'
-import getRatingName from '../../common/getRatingName'
+import { Card, Rating } from 'semantic-ui-react'
 import { ratingSelectObj } from '../../common/constants'
+import getRatingName from '../../common/getRatingName'
+import { cardExtOptionType } from '../contexts/SiteRatingContext'
+import SiteRatingCardButton from './SiteRatingCardButton'
 
 const SiteRatingCard = ({
-  option: { title, date, isCurrentUrl, url, rating }
+  title,
+  date,
+  isCurrentUrl,
+  url,
+  rating
 }: cardExtOptionType) => {
   const maxRating = Object.keys(ratingSelectObj).sort((a, b) =>
     a < b ? 1 : -1
@@ -17,13 +21,16 @@ const SiteRatingCard = ({
         <Card.Header>{title}</Card.Header>
         <Card.Meta>{date.toLocaleDateString()}</Card.Meta>
         <Card.Description>
-          <Rating defaultRating={rating} maxRating={maxRating} disabled />
+          <Rating
+            rating={rating}
+            defaultRating={rating}
+            maxRating={maxRating}
+            disabled
+          />
           {getRatingName(rating)}
         </Card.Description>
       </Card.Content>
-      <SiteRatingCardButton
-        option={{ title, date, isCurrentUrl, url, rating }}
-      />
+      <SiteRatingCardButton {...{ title, date, isCurrentUrl, url, rating }} />
     </Card>
   )
 }

@@ -1,5 +1,5 @@
-import { Input } from 'semantic-ui-react'
 import React from 'react'
+import { Input } from 'semantic-ui-react'
 import { ratingSelectObj } from '../../common/constants'
 const SiteRatingSearch = () => {
   return (

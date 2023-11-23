@@ -30,5 +30,8 @@
       "resources": ["dist/css/root.css"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "background": {
+    "service_worker": "dist/js/backgroundWorker.js"
+  }
 }

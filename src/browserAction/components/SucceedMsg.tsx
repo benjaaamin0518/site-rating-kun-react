@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from 'react'
-import { Message } from 'semantic-ui-react'
 import { Transition } from 'react-transition-group'
-import { SiteRatingContext } from '../contexts/SiteRatingContext'
+import { Message } from 'semantic-ui-react'
 import { defaultMsgStyle } from '../../common/constants'
+import { SiteRatingContext } from '../contexts/SiteRatingContext'
 const SucceedMsg = () => {
   const siteRatingContext = useContext(SiteRatingContext)
   const { isSucceed, setIsSucceed } = siteRatingContext

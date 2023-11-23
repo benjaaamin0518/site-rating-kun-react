@@ -1,7 +1,8 @@
-import { cardExtOptionType } from 'browserAction/contexts/SiteRatingContext'
-import { Button, Card } from 'semantic-ui-react'
 import React from 'react'
-const SiteRatingCardButton = ({ option: { url } }: cardExtOptionType) => {
+import { Button, Card } from 'semantic-ui-react'
+import { cardExtOptionType } from '../contexts/SiteRatingContext'
+const SiteRatingCardButton = ({ url }: cardExtOptionType) => {
+  console.log(url)
   return (
     <Card.Content extra>
       <div className="ui two buttons">

@@ -8,7 +8,8 @@ export default defineConfig((opt) => {
       outDir: '../dist/js',
       rollupOptions: {
         input: {
-          browserAction: resolve(__dirname, 'src/browserAction/index.tsx')
+          browserAction: resolve(__dirname, 'src/browserAction/index.tsx'),
+          backgroundWorker: resolve(__dirname, 'src/backgroundWorker/index.ts')
         },
         output: {
           entryFileNames: '[name].js'

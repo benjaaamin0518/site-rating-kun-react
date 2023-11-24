@@ -6,13 +6,15 @@ export default defineConfig((opt) => {
     root: 'src',
     build: {
       outDir: '../dist/js',
-      emptyOutDir:true,
+      emptyOutDir:false,
       rollupOptions: {
         input: {
-          browserAction: resolve(__dirname, 'src/browserAction/index.tsx')
+          backgroundWorker: resolve(__dirname, 'src/backgroundWorker/index.ts')
         },
         output: {
-          entryFileNames: '[name].js'
+          entryFileNames: '[name].js',
+          inlineDynamicImports: true,
+          format: 'iife'
         }
       }
     }

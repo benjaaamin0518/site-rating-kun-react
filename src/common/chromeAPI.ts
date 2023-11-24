@@ -1,6 +1,6 @@
 import { getBucket } from '@extend-chrome/storage'
 import { cardBaseOptionArrType } from 'browserAction/contexts/SiteRatingContext'
-import { currentPageObjType } from '../backgroundWorker'
+import { currentPageObjType, messageBGUnionType } from '../backgroundWorker'
 // export type currentPageObjType = { url: string; title: string }
 type chromeStorageType = { storage: cardBaseOptionArrType }
 namespace chromeApiType {
@@ -24,7 +24,7 @@ const chromeApi: chromeApiType.chromeApiType = () => {
   }
   const getCurrentPage: chromeApiType.getCurrentPage = () => {
     return new Promise((resolve) => {
-      chrome.runtime.sendMessage(
+      chrome.runtime.sendMessage<{ value: messageBGUnionType }>(
         {
           value: `getCurrentUrl`
         },

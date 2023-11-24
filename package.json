@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "develop": "tsc && vite build --emptyOutDir -w",
-    "build": "tsc && vite build --emptyOutDir"
+    "develop": "tsc && vite build && vite build --config=vite.config.backgroundWorker.js -w",
+    "build": "tsc && vite build && vite build --config=vite.config.backgroundWorker.js"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",

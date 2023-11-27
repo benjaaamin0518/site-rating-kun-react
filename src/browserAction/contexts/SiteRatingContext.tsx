@@ -1,4 +1,4 @@
-import { currentPageObjType } from 'backgroundWorker'
+import { currentPageObjType, messageBGUnionType } from 'backgroundWorker'
 import React, { createContext, useEffect, useState } from 'react'
 import chromeApi from '../../common/chromeAPI'
 import { ratingSelectObj } from '../../common/constants'
@@ -48,7 +48,7 @@ const SiteRatingContextProvider = ({ children }: Props) => {
     useState<cardExtOptionType>(contextValue.currentCardExtOption)
   const [currentOtherCardExtOptionArr, setCurrentOtherCardExtOptionArr] =
     useState<cardExtOptionArrType>(contextValue.currentOtherCardExtOptionArr)
-  const { getStorage, setStorage, getCurrentPage } = chromeApi()
+  const { getStorage, setStorage, sendMessage } = chromeApi()
   const currentSiteRatingSave: currentSiteRatingSaveType = (selectValue) => {
     setCurrentCardExtOption((currentCardExtOption) => {
       return { ...currentCardExtOption, rating: selectValue }
@@ -56,7 +56,10 @@ const SiteRatingContextProvider = ({ children }: Props) => {
   }
   useEffect(() => {
     const getCurrentPageobj = async () => {
-      const currentObj = await getCurrentPage()
+      const currentObj = await sendMessage<
+        currentPageObjType,
+        messageBGUnionType
+      >('getCurrentUrl')
       return currentObj
     }
     const getCardExtOptionArr = async (currentObj: currentPageObjType) => {

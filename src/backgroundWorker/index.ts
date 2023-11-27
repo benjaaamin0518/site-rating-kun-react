@@ -1,3 +1,4 @@
+import chromeApi from '../common/chromeAPI'
 import getRatingName from '../common/getRatingName'
 
 export type currentPageObjType = { url: string; title: string }
@@ -8,21 +9,23 @@ export type messageBGUnionType = 'getCurrentUrl'
 const onMessageBGEventDefObj: onMessageBGEventDefObjType = {
   getCurrentPage: { message: 'getCurrentUrl' }
 }
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+const { addListener, query } = chromeApi()
+addListener('onMessage', (message, sender, sendResponse) => {
   if (message.value == onMessageBGEventDefObj.getCurrentPage.message) {
     let queryinfo = {
       active: true,
       currentWindow: true
     }
     console.log(getRatingName('0'))
-    chrome.tabs.query(queryinfo, function (tabs) {
+    query(queryinfo, (tabs) => {
       const { url, title } = tabs[0]
       const response: currentPageObjType = {
         url: url || '',
         title: title || ''
       }
+      console.log(response)
       sendResponse(response)
     })
-    return true
   }
+  return true
 })

@@ -111,3 +111,5 @@ typings/
 plugin/js
 plugin/manifest.json
 plugin/index.js
+
+chatGPTApi.ts

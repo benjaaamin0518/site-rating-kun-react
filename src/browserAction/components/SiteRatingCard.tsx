@@ -1,7 +1,7 @@
-import React from 'react'
-import { Card, Rating } from 'semantic-ui-react'
-import { ratingSelectObj } from '../../common/constants'
-import getRatingName from '../../common/getRatingName'
+import React, { useEffect, useState } from 'react'
+import { Card, Input, Rating } from 'semantic-ui-react'
+import { rateSelectObj } from '../../common/constants'
+import getRateName from '../../common/getRateName'
 import { cardExtOptionType } from '../contexts/SiteRatingContext'
 import SiteRatingCardButton from './SiteRatingCardButton'
 
@@ -10,27 +10,56 @@ const SiteRatingCard = ({
   date,
   isCurrentUrl,
   url,
-  rating
+  rate
 }: cardExtOptionType) => {
-  const maxRating = Object.keys(ratingSelectObj).sort((a, b) =>
-    a < b ? 1 : -1
-  )[0]
+  const [isEdit, setIsEdit] = useState(false)
+  const [inputValue, setInputValue] = useState('')
+  const maxRate = Object.keys(rateSelectObj).sort((a, b) => (a < b ? 1 : -1))[0]
+  useEffect(() => {
+    if (isEdit) {
+      setInputValue(title)
+    }
+  }, [isEdit])
   return (
     <Card href={(!isCurrentUrl || ``) && url} className={'ratingCard'}>
       <Card.Content>
-        <Card.Header>{title}</Card.Header>
-        <Card.Meta>{date.toLocaleDateString()}</Card.Meta>
+        <Card.Header>
+          {isEdit ? (
+            <Input
+              value={inputValue}
+              size="mini"
+              fluid
+              onChange={(event, data) => setInputValue(data.value)}
+            />
+          ) : (
+            title
+          )}
+        </Card.Header>
+        <Card.Meta>{date}</Card.Meta>
         <Card.Description>
           <Rating
-            rating={rating}
-            defaultRating={rating}
-            maxRating={maxRating}
+            rating={rate}
+            defaultRating={rate}
+            maxRating={maxRate}
             disabled
           />
-          {getRatingName(rating)}
+          {getRateName(rate)}
         </Card.Description>
       </Card.Content>
-      <SiteRatingCardButton {...{ title, date, isCurrentUrl, url, rating }} />
+      {isCurrentUrl && (
+        <SiteRatingCardButton
+          {...{
+            title,
+            date,
+            isCurrentUrl,
+            url,
+            rate,
+            isEdit,
+            setIsEdit,
+            inputValue
+          }}
+        />
+      )}
     </Card>
   )
 }

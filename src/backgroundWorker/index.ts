@@ -1,5 +1,5 @@
-import chromeApi from '../common/chromeAPI'
-import getRatingName from '../common/getRatingName'
+import chromeApi from '../common/chromeApi'
+import getRateName from '../common/getRateName'
 
 export type currentPageObjType = { url: string; title: string }
 type onMessageBGEventDefObjType = {
@@ -16,7 +16,7 @@ addListener('onMessage', (message, sender, sendResponse) => {
       active: true,
       currentWindow: true
     }
-    console.log(getRatingName('0'))
+    console.log(getRateName('0'))
     query(queryinfo, (tabs) => {
       const { url, title } = tabs[0]
       const response: currentPageObjType = {

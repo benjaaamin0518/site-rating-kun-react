@@ -5,7 +5,7 @@ import { defaultMsgStyle } from '../../common/constants'
 import { SiteRatingContext } from '../contexts/SiteRatingContext'
 const UpdatingMsg = () => {
   const siteRatingContext = useContext(SiteRatingContext)
-  const { isUpdating, setIsUpdating } = siteRatingContext
+  const { isUpdating, setIsUpdating, setIsSucceed } = siteRatingContext
   const transitionStyles = {
     entering: { opacity: 1 },
     entered: { opacity: 1 },
@@ -17,9 +17,12 @@ const UpdatingMsg = () => {
     if (isUpdating) {
       setTimeout(() => {
         setIsUpdating(false)
-      }, 100)
+        setTimeout(() => {
+          setIsSucceed(true)
+        }, 450)
+      }, 500)
     }
-  }, [])
+  }, [isUpdating])
   return (
     <>
       <Transition timeout={500} in={isUpdating} mountOnEnter unmountOnExit>

@@ -19,7 +19,7 @@ const SucceedMsg = () => {
         setIsSucceed(false)
       }, 500)
     }
-  }, [])
+  }, [isSucceed])
   return (
     <>
       <Transition timeout={500} in={isSucceed} mountOnEnter unmountOnExit>

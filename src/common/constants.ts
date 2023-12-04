@@ -1,4 +1,4 @@
-export const ratingSelectObj = {
+export const rateSelectObj = {
   '4': { name: 'とてもいい' },
   '3': { name: 'いい' },
   '2': { name: 'わっるい' },
@@ -10,4 +10,3 @@ export const defaultMsgStyle = {
   opacity: 1,
   display: 'block'
 }
-

@@ -1,7 +1,7 @@
 import { currentPageObjType, messageBGUnionType } from 'backgroundWorker'
 import React, { createContext, useEffect, useState } from 'react'
-import chromeApi from '../../common/chromeAPI'
-import { ratingSelectObj } from '../../common/constants'
+import chromeApi from '../../common/chromeApi'
+import { rateSelectObj } from '../../common/constants'
 type contextValueType = {
   isUpdating: boolean
   setIsUpdating: React.Dispatch<React.SetStateAction<boolean>>
@@ -9,17 +9,19 @@ type contextValueType = {
   setIsSucceed: React.Dispatch<React.SetStateAction<boolean>>
   currentCardExtOption: cardExtOptionType
   currentOtherCardExtOptionArr: cardExtOptionArrType
-  currentSiteRatingSave: currentSiteRatingSaveType
+  currentSiteRateSave: currentSiteRateSaveType
+  currentSiteTitleSave: currentSiteTitleSaveType
 }
-type currentSiteRatingSaveType = (selectValue: selectTypeUnion) => void
-export type selectTypeUnion = keyof typeof ratingSelectObj
+type currentSiteRateSaveType = (selectValue: selectTypeUnion) => void
+type currentSiteTitleSaveType = (valie: string) => void
+export type selectTypeUnion = keyof typeof rateSelectObj
 export type cardBaseOptionType = {
-  date: Date
+  date: string
   url: string
   title: string
-  rating: selectTypeUnion
+  rate: selectTypeUnion
 }
-export type cardBaseOptionArrType = cardBaseOptionType[]
+export type cardBaseOptionArrType = Array<cardBaseOptionType>
 export type cardExtOptionType = cardBaseOptionType & {
   isCurrentUrl: boolean
 }
@@ -31,14 +33,15 @@ const contextValue: contextValueType = {
   isSucceed: false,
   setIsSucceed: () => {},
   currentCardExtOption: {
-    date: new Date(),
+    date: new Date().toLocaleDateString(),
     url: '',
     title: '',
-    rating: `0`,
+    rate: `0`,
     isCurrentUrl: true
   },
   currentOtherCardExtOptionArr: [],
-  currentSiteRatingSave: () => {}
+  currentSiteRateSave: () => {},
+  currentSiteTitleSave: () => {}
 }
 export const SiteRatingContext = createContext<contextValueType>(contextValue)
 const SiteRatingContextProvider = ({ children }: Props) => {
@@ -49,11 +52,23 @@ const SiteRatingContextProvider = ({ children }: Props) => {
   const [currentOtherCardExtOptionArr, setCurrentOtherCardExtOptionArr] =
     useState<cardExtOptionArrType>(contextValue.currentOtherCardExtOptionArr)
   const { getStorage, setStorage, sendMessage } = chromeApi()
-  const currentSiteRatingSave: currentSiteRatingSaveType = (selectValue) => {
+  const currentSiteRateSave: currentSiteRateSaveType = (selectValue) => {
     setCurrentCardExtOption((currentCardExtOption) => {
-      return { ...currentCardExtOption, rating: selectValue }
+      return { ...currentCardExtOption, rate: selectValue }
     })
+    setIsUpdating(true)
   }
+  const currentSiteTitleSave: currentSiteTitleSaveType = (value) => {
+    setCurrentCardExtOption((currentCardExtOption) => {
+      return { ...currentCardExtOption, title: value }
+    })
+    setIsUpdating(true)
+  }
+  useEffect(() => {
+    if (isUpdating) {
+      setStorage([currentCardExtOption, ...currentOtherCardExtOptionArr])
+    }
+  }, [currentCardExtOption])
   useEffect(() => {
     const getCurrentPageobj = async () => {
       const currentObj = await sendMessage<
@@ -64,6 +79,7 @@ const SiteRatingContextProvider = ({ children }: Props) => {
     }
     const getCardExtOptionArr = async (currentObj: currentPageObjType) => {
       const storageValue = await getStorage()
+      console.log(storageValue)
       const defaultCurrentobj: cardBaseOptionType = {
         ...contextValue.currentCardExtOption,
         url: currentObj.url,
@@ -97,7 +113,8 @@ const SiteRatingContextProvider = ({ children }: Props) => {
         setIsSucceed: setIsSucceed,
         currentCardExtOption: currentCardExtOption,
         currentOtherCardExtOptionArr: currentOtherCardExtOptionArr,
-        currentSiteRatingSave: currentSiteRatingSave
+        currentSiteRateSave: currentSiteRateSave,
+        currentSiteTitleSave: currentSiteTitleSave
       }}
     >
       {children}

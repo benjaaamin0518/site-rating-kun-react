@@ -23,8 +23,8 @@
     "noEmit": true,
     "isolatedModules": true
   },
-  // "typeRoots": ["src/types", "node_modules/@types"],
-  // "files": ["./node_modules/@kintone/dts-gen/kintone.d.ts"],
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "typeRoots": [],
+  "files": ["vite-env.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "vite-env.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

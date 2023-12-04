@@ -5,8 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "develop": "tsc && vite build && vite build --config=vite.config.backgroundWorker.js -w",
-    "build": "tsc && vite build && vite build --config=vite.config.backgroundWorker.js"
+    "watch-browser": "tsc && vite build -w",
+    "watch-background": "tsc && vite build --config=vite.config.backgroundWorker.js -w",
+    "watch-content": "tsc && vite build --config=vite.config.contentScript.js -w",
+    "develop": "run-p watch-browser watch-background watch-content",
+    "build": "tsc && vite build && vite build --config=vite.config.backgroundWorker.js && vite build --config=vite.config.contentScript.js"
   },
   "type": "module",
   "keywords": [],
@@ -27,6 +30,7 @@
     "@types/react-dom": "^18.2.7",
     "@types/react-transition-group": "^4.4.9",
     "@vitejs/plugin-react-swc": "^3.3.2",
+    "npm-run-all": "^4.1.5",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
   }

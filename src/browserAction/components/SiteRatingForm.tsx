@@ -1,14 +1,15 @@
 import React, { useContext, useState } from 'react'
-import { Form } from 'semantic-ui-react'
-import { ratingSelectObj } from '../../common/constants'
+import { Form, Radio } from 'semantic-ui-react'
+import { rateSelectObj } from '../../common/constants'
 import {
   selectTypeUnion,
   SiteRatingContext
 } from '../contexts/SiteRatingContext'
 const SiteRatingForm = () => {
-  const siteRatingContext = useContext(SiteRatingContext)
-  const [selectValue, setSelectValue] = useState<selectTypeUnion>('0')
-  const handleClick = (selectValue: selectTypeUnion) =>
+  const { currentSiteRateSave, currentCardExtOption } =
+    useContext(SiteRatingContext)
+  const [selectValue, setSelectValue] = useState<selectTypeUnion | null>(null)
+  const handleClick = (selectValue: selectTypeUnion | null) =>
     setSelectValue(selectValue)
   const structEntriesObj = <T extends Record<string, any>>(
     object: T
@@ -21,21 +22,30 @@ const SiteRatingForm = () => {
     <Form>
       <Form.Group grouped>
         <label>このサイトの評価は？</label>
-        {structEntriesObj(ratingSelectObj).map(([key, value]) => (
-          <Form.Field
-            label={value.name}
-            control="input"
-            type="radio"
-            name="htmlRadios"
-            value={key}
-            onChange={() => handleClick(key)}
-          />
-        ))}
+        {structEntriesObj(rateSelectObj).map(([key, value]) => {
+          const isChecked = selectValue
+            ? key == selectValue
+            : key == currentCardExtOption.rate
+          console.log(isChecked)
+          return (
+            <Form.Field>
+              <Radio
+                label={value.name}
+                control="input"
+                type="radio"
+                name="htmlRadios"
+                value={key}
+                checked={isChecked}
+                onChange={() => handleClick(key)}
+              />
+            </Form.Field>
+          )
+        })}
       </Form.Group>
       <Form.Button
         compact
         primary
-        onClick={() => siteRatingContext.currentSiteRatingSave(selectValue)}
+        onClick={() => currentSiteRateSave(selectValue || '0')}
       >
         Save
       </Form.Button>

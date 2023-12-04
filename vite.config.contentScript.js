@@ -9,7 +9,7 @@ export default defineConfig((opt) => {
       emptyOutDir: false,
       rollupOptions: {
         input: {
-          backgroundWorker: resolve(__dirname, 'src/backgroundWorker/index.ts')
+          contentScript: resolve(__dirname, 'src/contentScript/index.ts')
         },
         output: {
           entryFileNames: '[name].js',

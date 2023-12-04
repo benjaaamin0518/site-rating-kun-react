@@ -6,7 +6,7 @@ export default defineConfig((opt) => {
     root: 'src',
     build: {
       outDir: '../dist/js',
-      emptyOutDir:true,
+      emptyOutDir: false,
       rollupOptions: {
         input: {
           browserAction: resolve(__dirname, 'src/browserAction/index.tsx')

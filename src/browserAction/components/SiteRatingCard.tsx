@@ -21,7 +21,10 @@ const SiteRatingCard = ({
     }
   }, [isEdit])
   return (
-    <Card href={(!isCurrentUrl || ``) && url} className={'ratingCard'}>
+    <Card
+      {...(isCurrentUrl ? {} : { href: url, onClick: () => window.open(url) })}
+      className={'ratingCard'}
+    >
       <Card.Content>
         <Card.Header>
           {isEdit ? (

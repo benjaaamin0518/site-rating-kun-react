@@ -11,6 +11,8 @@ type contextValueType = {
   currentOtherCardExtOptionArr: cardExtOptionArrType
   currentSiteRateSave: currentSiteRateSaveType
   currentSiteTitleSave: currentSiteTitleSaveType
+  searchInputValue: string
+  setSearchInputValue: React.Dispatch<React.SetStateAction<string>>
 }
 type currentSiteRateSaveType = (selectValue: selectTypeUnion) => void
 type currentSiteTitleSaveType = (valie: string) => void
@@ -41,7 +43,9 @@ const contextValue: contextValueType = {
   },
   currentOtherCardExtOptionArr: [],
   currentSiteRateSave: () => {},
-  currentSiteTitleSave: () => {}
+  currentSiteTitleSave: () => {},
+  searchInputValue: '',
+  setSearchInputValue: () => {}
 }
 export const SiteRatingContext = createContext<contextValueType>(contextValue)
 const SiteRatingContextProvider = ({ children }: Props) => {
@@ -51,6 +55,9 @@ const SiteRatingContextProvider = ({ children }: Props) => {
     useState<cardExtOptionType>(contextValue.currentCardExtOption)
   const [currentOtherCardExtOptionArr, setCurrentOtherCardExtOptionArr] =
     useState<cardExtOptionArrType>(contextValue.currentOtherCardExtOptionArr)
+  const [searchInputValue, setSearchInputValue] = useState(
+    contextValue.searchInputValue
+  )
   const { getStorage, setStorage, sendMessage } = chromeApi()
   const currentSiteRateSave: currentSiteRateSaveType = (selectValue) => {
     setCurrentCardExtOption((currentCardExtOption) => {
@@ -114,7 +121,9 @@ const SiteRatingContextProvider = ({ children }: Props) => {
         currentCardExtOption: currentCardExtOption,
         currentOtherCardExtOptionArr: currentOtherCardExtOptionArr,
         currentSiteRateSave: currentSiteRateSave,
-        currentSiteTitleSave: currentSiteTitleSave
+        currentSiteTitleSave: currentSiteTitleSave,
+        searchInputValue: searchInputValue,
+        setSearchInputValue: setSearchInputValue
       }}
     >
       {children}

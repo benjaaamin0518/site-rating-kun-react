@@ -23,7 +23,7 @@ namespace chromeApiType {
   export type setStorage = (value: cardBaseOptionArrType) => void
   export type getStorage = () => Promise<cardBaseOptionArrType>
   export type getCurrentPage = () => Promise<currentPageObjType>
-  export type sendMessage = <P extends sendMessageType>(
+  export type sendMessage = <T extends sendMessageType, P extends T>(
     type: Exclude<sendMessageType, P> extends never
       ? 'どちらかを指定してください'
       : P,

@@ -94,14 +94,17 @@ const SiteRatingContextProvider = ({ children }: Props) => {
           currentWindow: true
         },
         async () => {
-          await sendMessage<'tabs'>('tabs', 'changeCurrentRate')
+          await sendMessage<sendMessageType, 'tabs'>(
+            'tabs',
+            'changeCurrentRate'
+          )
         }
       )
     }
   }, [currentCardExtOption])
   useEffect(() => {
     const getCurrentPageobj = async () => {
-      const currentObj = await sendMessage<'runtime'>(
+      const currentObj = await sendMessage<sendMessageType, 'runtime'>(
         'runtime',
         'getCurrentUrl'
       )

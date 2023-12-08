@@ -1,4 +1,4 @@
-import { currentPageObjType, messageBGUnionType } from 'backgroundWorker'
+import { currentPageObjType } from 'backgroundWorker'
 import React, { createContext, useEffect, useState } from 'react'
 import chromeApi from '../../common/chromeApi'
 import { rateSelectObj } from '../../common/constants'
@@ -13,9 +13,12 @@ type contextValueType = {
   currentSiteTitleSave: currentSiteTitleSaveType
   searchInputValue: string
   setSearchInputValue: React.Dispatch<React.SetStateAction<string>>
+  currentSiteRateDelete: currentSiteRateDeleteType
 }
+type sendMessageType = 'runtime' | 'tabs'
 type currentSiteRateSaveType = (selectValue: selectTypeUnion) => void
 type currentSiteTitleSaveType = (valie: string) => void
+type currentSiteRateDeleteType = () => void
 export type selectTypeUnion = keyof typeof rateSelectObj
 export type cardBaseOptionType = {
   date: string
@@ -45,7 +48,8 @@ const contextValue: contextValueType = {
   currentSiteRateSave: () => {},
   currentSiteTitleSave: () => {},
   searchInputValue: '',
-  setSearchInputValue: () => {}
+  setSearchInputValue: () => {},
+  currentSiteRateDelete: () => {}
 }
 export const SiteRatingContext = createContext<contextValueType>(contextValue)
 const SiteRatingContextProvider = ({ children }: Props) => {
@@ -58,7 +62,7 @@ const SiteRatingContextProvider = ({ children }: Props) => {
   const [searchInputValue, setSearchInputValue] = useState(
     contextValue.searchInputValue
   )
-  const { getStorage, setStorage, sendMessage } = chromeApi()
+  const { getStorage, setStorage, sendMessage, query } = chromeApi()
   const currentSiteRateSave: currentSiteRateSaveType = (selectValue) => {
     setCurrentCardExtOption((currentCardExtOption) => {
       return { ...currentCardExtOption, rate: selectValue }
@@ -71,17 +75,36 @@ const SiteRatingContextProvider = ({ children }: Props) => {
     })
     setIsUpdating(true)
   }
+  const currentSiteRateDelete: currentSiteRateDeleteType = () => {
+    setCurrentCardExtOption((currentCardExtOption) => {
+      return { ...currentCardExtOption, rate: '0' }
+    })
+    setIsUpdating(true)
+  }
   useEffect(() => {
+    const isDelete = currentCardExtOption.rate === '0'
+    const setStorageValue = isDelete
+      ? [...currentOtherCardExtOptionArr]
+      : [currentCardExtOption, ...currentOtherCardExtOptionArr]
     if (isUpdating) {
-      setStorage([currentCardExtOption, ...currentOtherCardExtOptionArr])
+      setStorage(setStorageValue)
+      query(
+        {
+          active: true,
+          currentWindow: true
+        },
+        async () => {
+          await sendMessage<'tabs'>('tabs', 'changeCurrentRate')
+        }
+      )
     }
   }, [currentCardExtOption])
   useEffect(() => {
     const getCurrentPageobj = async () => {
-      const currentObj = await sendMessage<
-        currentPageObjType,
-        messageBGUnionType
-      >('getCurrentUrl')
+      const currentObj = await sendMessage<'runtime'>(
+        'runtime',
+        'getCurrentUrl'
+      )
       return currentObj
     }
     const getCardExtOptionArr = async (currentObj: currentPageObjType) => {
@@ -123,7 +146,8 @@ const SiteRatingContextProvider = ({ children }: Props) => {
         currentSiteRateSave: currentSiteRateSave,
         currentSiteTitleSave: currentSiteTitleSave,
         searchInputValue: searchInputValue,
-        setSearchInputValue: setSearchInputValue
+        setSearchInputValue: setSearchInputValue,
+        currentSiteRateDelete: currentSiteRateDelete
       }}
     >
       {children}

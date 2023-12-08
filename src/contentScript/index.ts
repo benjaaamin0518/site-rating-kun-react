@@ -56,6 +56,9 @@ const observerCallBack = (
   for (const element of elements) {
     element.addedNodes.forEach((node) => {
       if (node instanceof Element) {
+        const isExistElemant =
+          node.querySelectorAll(`[class=${classNameObj.rate}]`).length > 0
+        if (isExistElemant) return
         showRates(ratePages, node)
       }
     })

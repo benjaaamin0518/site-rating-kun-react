@@ -15,7 +15,8 @@ const SiteRatingCardButton = ({
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>
   inputValue: string
 }) => {
-  const { currentSiteTitleSave } = useContext(SiteRatingContext)
+  const { currentSiteTitleSave, currentSiteRateDelete } =
+    useContext(SiteRatingContext)
   console.log(url)
   return (
     <Card.Content extra>
@@ -42,6 +43,7 @@ const SiteRatingCardButton = ({
               setIsEdit(false)
               return
             }
+            currentSiteRateDelete()
           }}
         >
           {isEdit ? 'キャンセル' : '削除'}

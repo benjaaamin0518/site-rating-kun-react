@@ -2,9 +2,16 @@ import { getBucket } from '@extend-chrome/storage'
 import { cardBaseOptionArrType } from 'browserAction/contexts/SiteRatingContext'
 import { currentPageObjType, messageBGUnionType } from '../backgroundWorker'
 type chromeStorageType = { storage: cardBaseOptionArrType }
-type messageUnionType = messageBGUnionType
-type sendMessageResUnionType = currentPageObjType
+type messageUnionType = {
+  runtime: messageBGUnionType
+  tabs: 'changeCurrentRate'
+}
+type sendMessageResUnionType = {
+  runtime: currentPageObjType
+  tabs: currentPageObjType
+}
 type categoryUnionType = 'onMessage'
+type sendMessageType = 'runtime' | 'tabs'
 namespace chromeApiType {
   export type chromeApiType = () => {
     setStorage: setStorage
@@ -16,13 +23,15 @@ namespace chromeApiType {
   export type setStorage = (value: cardBaseOptionArrType) => void
   export type getStorage = () => Promise<cardBaseOptionArrType>
   export type getCurrentPage = () => Promise<currentPageObjType>
-  export type sendMessage = <
-    T extends sendMessageResUnionType,
-    K extends messageUnionType
+  export type sendMessage = <P extends sendMessageType>(
+    type: Exclude<sendMessageType, P> extends never
+      ? 'どちらかを指定してください'
+      : P,
+    value: messageUnionType[P]
+  ) => Promise<sendMessageResUnionType[P]>
+  export type addListener = <
+    T extends messageUnionType[keyof messageUnionType]
   >(
-    value: K
-  ) => Promise<T>
-  export type addListener = <T extends messageUnionType>(
     category: categoryUnionType,
     callback: (
       message: { value: T },
@@ -44,16 +53,28 @@ const chromeApi: chromeApiType.chromeApiType = () => {
     const value = await bucket.get()
     return value.storage || []
   }
-  const sendMessage: chromeApiType.sendMessage = (value) => {
+  const sendMessage: chromeApiType.sendMessage = (type, value) => {
     return new Promise((resolve) => {
-      chrome.runtime.sendMessage(
-        {
-          value: value
-        },
-        (response) => {
-          resolve(response)
-        }
-      )
+      switch (type) {
+        case 'runtime':
+          chrome.runtime.sendMessage(
+            {
+              value: value
+            },
+            (response) => {
+              resolve(response)
+            }
+          )
+        case 'tabs':
+          chrome.runtime.sendMessage(
+            {
+              value: value
+            },
+            (response) => {
+              resolve(response)
+            }
+          )
+      }
     })
   }
   const addListener: chromeApiType.addListener = (category, callback) => {

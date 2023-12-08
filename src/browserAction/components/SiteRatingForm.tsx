@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Form, Radio } from 'semantic-ui-react'
 import { rateSelectObj } from '../../common/constants'
 import {
@@ -18,14 +18,15 @@ const SiteRatingForm = () => {
       .filter(([key, value]) => key !== '0')
       .sort(([key, value], [key2, value2]) => (key < key2 ? 1 : -1))
   }
+  useEffect(() => {
+      setSelectValue(currentCardExtOption.rate)
+  }, [currentCardExtOption.rate])
   return (
     <Form>
       <Form.Group grouped>
         <label>このサイトの評価は？</label>
         {structEntriesObj(rateSelectObj).map(([key, value]) => {
-          const isChecked = selectValue
-            ? key == selectValue
-            : key == currentCardExtOption.rate
+          const isChecked = key == selectValue
           console.log(isChecked)
           return (
             <Form.Field>

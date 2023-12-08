@@ -1,7 +1,10 @@
 import { getBucket } from '@extend-chrome/storage'
 import { cardBaseOptionArrType } from 'browserAction/contexts/SiteRatingContext'
 import { currentPageObjType, messageBGUnionType } from '../backgroundWorker'
-type chromeStorageType = { storage: cardBaseOptionArrType }
+export type chromeStorageType = {
+  storage: cardBaseOptionArrType
+  isVisible: boolean
+}
 type messageUnionType = {
   runtime: messageBGUnionType
   tabs: 'changeCurrentRate'
@@ -20,8 +23,8 @@ namespace chromeApiType {
     addListener: addListener
     query: query
   }
-  export type setStorage = (value: cardBaseOptionArrType) => void
-  export type getStorage = () => Promise<cardBaseOptionArrType>
+  export type setStorage = (value: chromeStorageType) => void
+  export type getStorage = () => Promise<chromeStorageType>
   export type getCurrentPage = () => Promise<currentPageObjType>
   export type sendMessage = <T extends sendMessageType, P extends T>(
     type: Exclude<sendMessageType, P> extends never
@@ -46,12 +49,18 @@ namespace chromeApiType {
 }
 const chromeApi: chromeApiType.chromeApiType = () => {
   const bucket = getBucket<chromeStorageType>('site-rating-bucket')
+
   const setStorage: chromeApiType.setStorage = (value) => {
-    bucket.set({ storage: value })
+    bucket.set(value)
   }
   const getStorage: chromeApiType.getStorage = async () => {
     const value = await bucket.get()
-    return value.storage || []
+    return value || { storage: [], isVisible: true }
+  }
+  const query: chromeApiType.query = (queryInfo, callback) => {
+    chrome.tabs.query(queryInfo, (tabs) => {
+      callback(tabs)
+    })
   }
   const sendMessage: chromeApiType.sendMessage = (type, value) => {
     return new Promise((resolve) => {
@@ -65,15 +74,26 @@ const chromeApi: chromeApiType.chromeApiType = () => {
               resolve(response)
             }
           )
+          break
         case 'tabs':
-          chrome.runtime.sendMessage(
+          query(
             {
-              value: value
+              active: true,
+              currentWindow: true
             },
-            (response) => {
-              resolve(response)
+            (tabs) => {
+              chrome.tabs.sendMessage(
+                tabs[0].id!,
+                {
+                  value: value
+                },
+                (response) => {
+                  resolve(response)
+                }
+              )
             }
           )
+          break
       }
     })
   }
@@ -85,12 +105,8 @@ const chromeApi: chromeApiType.chromeApiType = () => {
             return callback(message, sender, sendResponse)
           }
         )
+        break
     }
-  }
-  const query: chromeApiType.query = (queryInfo, callback) => {
-    chrome.tabs.query(queryInfo, (tabs) => {
-      callback(tabs)
-    })
   }
   return { setStorage, getStorage, sendMessage, addListener, query }
 }

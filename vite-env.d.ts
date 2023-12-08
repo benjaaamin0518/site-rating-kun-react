@@ -1,7 +1,7 @@
 ///<reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_CHAT_GPT_API: string
+  readonly VITE_QIITA_API_TOKEN: string
   // その他の環境変数...
 }
 

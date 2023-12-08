@@ -10,8 +10,8 @@ const onMessageBGEventDefObj: onMessageBGEventDefObjType = {
   getCurrentPage: { message: 'getCurrentUrl' }
 }
 const { addListener, query } = chromeApi()
-addListener('onMessage', (message, sender, sendResponse) => {
-  if (message.value == onMessageBGEventDefObj.getCurrentPage.message) {
+addListener('onMessage', ({ value }, sender, sendResponse) => {
+  if (value == onMessageBGEventDefObj.getCurrentPage.message) {
     let queryinfo = {
       active: true,
       currentWindow: true

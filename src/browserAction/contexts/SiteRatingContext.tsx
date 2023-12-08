@@ -1,6 +1,6 @@
 import { currentPageObjType } from 'backgroundWorker'
-import React, { createContext, useEffect, useState } from 'react'
-import chromeApi from '../../common/chromeApi'
+import React, { createContext, useEffect, useRef, useState } from 'react'
+import chromeApi, { chromeStorageType } from '../../common/chromeApi'
 import { rateSelectObj } from '../../common/constants'
 type contextValueType = {
   isUpdating: boolean
@@ -14,6 +14,8 @@ type contextValueType = {
   searchInputValue: string
   setSearchInputValue: React.Dispatch<React.SetStateAction<string>>
   currentSiteRateDelete: currentSiteRateDeleteType
+  isVisible: boolean
+  qiitaPostsVisibleSave: qiitaPostsVisibleSaveType
 }
 type sendMessageType = 'runtime' | 'tabs'
 type currentSiteRateSaveType = (selectValue: selectTypeUnion) => void
@@ -26,6 +28,7 @@ export type cardBaseOptionType = {
   title: string
   rate: selectTypeUnion
 }
+type qiitaPostsVisibleSaveType = (isVisible: boolean) => void
 export type cardBaseOptionArrType = Array<cardBaseOptionType>
 export type cardExtOptionType = cardBaseOptionType & {
   isCurrentUrl: boolean
@@ -49,12 +52,15 @@ const contextValue: contextValueType = {
   currentSiteTitleSave: () => {},
   searchInputValue: '',
   setSearchInputValue: () => {},
-  currentSiteRateDelete: () => {}
+  currentSiteRateDelete: () => {},
+  isVisible: true,
+  qiitaPostsVisibleSave: () => {}
 }
 export const SiteRatingContext = createContext<contextValueType>(contextValue)
 const SiteRatingContextProvider = ({ children }: Props) => {
   const [isUpdating, setIsUpdating] = useState(contextValue.isUpdating)
   const [isSucceed, setIsSucceed] = useState(contextValue.isSucceed)
+  const [isVisible, setIsVisible] = useState(contextValue.isVisible)
   const [currentCardExtOption, setCurrentCardExtOption] =
     useState<cardExtOptionType>(contextValue.currentCardExtOption)
   const [currentOtherCardExtOptionArr, setCurrentOtherCardExtOptionArr] =
@@ -62,6 +68,10 @@ const SiteRatingContextProvider = ({ children }: Props) => {
   const [searchInputValue, setSearchInputValue] = useState(
     contextValue.searchInputValue
   )
+  const storageValueRef = useRef<chromeStorageType>({
+    storage: [],
+    isVisible: isVisible
+  })
   const { getStorage, setStorage, sendMessage, query } = chromeApi()
   const currentSiteRateSave: currentSiteRateSaveType = (selectValue) => {
     setCurrentCardExtOption((currentCardExtOption) => {
@@ -81,25 +91,23 @@ const SiteRatingContextProvider = ({ children }: Props) => {
     })
     setIsUpdating(true)
   }
+  const qiitaPostsVisibleSave: qiitaPostsVisibleSaveType = (isVisible) => {
+    storageValueRef.current = { ...storageValueRef.current, isVisible }
+    setIsVisible(isVisible)
+    setStorage(storageValueRef.current)
+  }
   useEffect(() => {
     const isDelete = currentCardExtOption.rate === '0'
     const setStorageValue = isDelete
       ? [...currentOtherCardExtOptionArr]
       : [currentCardExtOption, ...currentOtherCardExtOptionArr]
+    storageValueRef.current = { storage: setStorageValue, isVisible: isVisible }
     if (isUpdating) {
-      setStorage(setStorageValue)
-      query(
-        {
-          active: true,
-          currentWindow: true
-        },
-        async () => {
-          await sendMessage<sendMessageType, 'tabs'>(
-            'tabs',
-            'changeCurrentRate'
-          )
-        }
-      )
+      setStorage(storageValueRef.current)
+      const updateRateElement = async () => {
+        await sendMessage<sendMessageType, 'tabs'>('tabs', 'changeCurrentRate')
+      }
+      updateRateElement()
     }
   }, [currentCardExtOption])
   useEffect(() => {
@@ -112,16 +120,15 @@ const SiteRatingContextProvider = ({ children }: Props) => {
     }
     const getCardExtOptionArr = async (currentObj: currentPageObjType) => {
       const storageValue = await getStorage()
-      console.log(storageValue)
       const defaultCurrentobj: cardBaseOptionType = {
         ...contextValue.currentCardExtOption,
         url: currentObj.url,
         title: currentObj.title
       }
       const currentCardBaseOption =
-        storageValue.find((value) => value.url === currentObj.url) ||
+        storageValue.storage.find((value) => value.url === currentObj.url) ||
         defaultCurrentobj
-      const currentOtherCardBaseOption = storageValue.filter(
+      const currentOtherCardBaseOption = storageValue.storage.filter(
         (value) => value.url !== currentObj.url
       )
       const currentCardExtOption: cardExtOptionType = {
@@ -132,7 +139,16 @@ const SiteRatingContextProvider = ({ children }: Props) => {
         currentOtherCardBaseOption.map((value) => {
           return { ...value, isCurrentUrl: false }
         })
+      const setStorageValue =
+        currentCardExtOption.rate == '0'
+          ? [...currentOtherCardExtOption]
+          : [currentCardExtOption, ...currentOtherCardExtOption]
+      storageValueRef.current = {
+        storage: setStorageValue,
+        isVisible: storageValue.isVisible
+      }
       setCurrentCardExtOption(currentCardExtOption)
+      setIsVisible(storageValue.isVisible)
       setCurrentOtherCardExtOptionArr(currentOtherCardExtOption)
     }
     getCurrentPageobj().then((currentObj) => getCardExtOptionArr(currentObj))
@@ -150,7 +166,9 @@ const SiteRatingContextProvider = ({ children }: Props) => {
         currentSiteTitleSave: currentSiteTitleSave,
         searchInputValue: searchInputValue,
         setSearchInputValue: setSearchInputValue,
-        currentSiteRateDelete: currentSiteRateDelete
+        currentSiteRateDelete: currentSiteRateDelete,
+        isVisible: isVisible,
+        qiitaPostsVisibleSave: qiitaPostsVisibleSave
       }}
     >
       {children}

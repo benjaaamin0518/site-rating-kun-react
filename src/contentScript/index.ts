@@ -34,7 +34,7 @@ const createQiitaPostsElement = (posts: Qiita[]) => {
     const qiitaPostElement = document.createElement('p')
     qiitaPostElement.innerText = `${index + 1}.`
     const titleElement = document.createElement('b')
-    titleElement.innerText = title
+    titleElement.innerText = escapeHtml(title)
     const linkElement = document.createElement('a')
     linkElement.href = url
     linkElement.innerText = url
@@ -76,6 +76,23 @@ const showRates = (ratePages: ratePageType[], document: Document | Element) => {
   for (const ratePage of ratePages) {
     showRateOnLinks(ratePage, document)
   }
+}
+const escapeHtml = (value: string) => {
+  if (typeof value !== 'string') {
+    return value
+  }
+  return value.replace(/[&'`"<>]/g, (match) => {
+    return (
+      {
+        '&': '&amp;',
+        "'": '&#x27;',
+        '`': '&#x60;',
+        '"': '&quot;',
+        '<': '&lt;',
+        '>': '&gt;'
+      }[match] || match
+    )
+  })
 }
 const init = async () => {
   const ratePages = await getRatePages()

@@ -48,7 +48,7 @@ const SiteRatingForm = () => {
         primary
         onClick={() => currentSiteRateSave(selectValue || '0')}
       >
-        Save
+        評価を保存する
       </Form.Button>
     </Form>
   )

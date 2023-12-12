@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "サイト評価するおくん(削除機能なし)",
+  "name": "サイト評価するおくん",
   "description": "サイトの評価を保存しておくことによって過去のサイトの振り返りや、実際に訪れた時にサイトを参考にする判断基準にも使える機能です",
-  "version": "2.0",
+  "version": "3.0",
   "permissions": [
     "tabs",
     "storage",

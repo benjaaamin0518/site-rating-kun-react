@@ -1,10 +1,8 @@
 # サイト評価するおくん React版 ver3.0
-
+![`samune](https://github.com/benjaaamin0518/site-rating-kun-react/assets/98086140/22d52fd6-36fc-4ad6-8da2-afee907a88c4)
 サイトの評価を保存しておくことによって過去のサイトの振り返りや、
-実際に訪れた時にサイトを参考にする判断基準にも使える機能です
 
- ## 画面(仮)
-<img width="320" alt="image" src="https://github.com/benjaaamin0518/site-rating-kun-react/assets/98086140/18c181c9-7286-40ad-aea4-d1db8133955f">
+実際に訪れた時にサイトを参考にする判断基準にも使える機能です
 
 # デモ
  
@@ -27,15 +25,18 @@
 # 使い方
  
 Chromeの拡張機能→デベロッパーモードをオンにした状態で、
+
 ファイル追加より追加を行う。
+
 評価の編集や作成は拡張機能をブラウザより選択してポップアップ表示がなされた
+
 画面で操作を行う。
 
-#画面
+#　画面
 
 | ・ポップアップ表示画面 |
 |:------------:|
-|     ![image](https://user-images.githubusercontent.com/98086140/183587843-07eeca9b-e2ec-4fc7-bf90-00f1992b078c.png)    |
+|     <img width="320" alt="image" src="https://github.com/benjaaamin0518/site-rating-kun-react/assets/98086140/18c181c9-7286-40ad-aea4-d1db8133955f">    |
 
 |    ・検索時    |
 |:------------:|

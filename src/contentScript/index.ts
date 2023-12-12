@@ -5,6 +5,7 @@ import qiitaApi, { Qiita } from '../common/qiitaApi'
 type createRateElementType = (rateName: string) => HTMLSpanElement
 type ratePageType = { url: string; rate: selectTypeUnion }
 const { getStorage, setStorage, sendMessage, addListener } = chromeApi()
+let isVisible = false
 let isShow = false
 const classNameObj = {
   rate: 'siteRate'
@@ -12,9 +13,10 @@ const classNameObj = {
 type onMessageCSEventDefObjType = {
   [key: string]: { message: messageCSUnionType }
 }
-export type messageCSUnionType = 'changeCurrentRate'
+export type messageCSUnionType = 'changeCurrentRate' | 'changeQiitaVisible'
 const onMessageCSEventDefObj: onMessageCSEventDefObjType = {
-  changeCurrentRate: { message: 'changeCurrentRate' }
+  changeCurrentRate: { message: 'changeCurrentRate' },
+  changeQiitaVisible: { message: 'changeQiitaVisible' }
 }
 
 const { getRelativePosts } = qiitaApi()
@@ -58,6 +60,11 @@ const getRatePages = async () => {
     await getStorage()
   ).storage
 }
+const getIsVisible = async () => {
+  return await (
+    await getStorage()
+  ).isVisible
+}
 const showRateOnLinks = async (
   { url, rate }: ratePageType,
   document: Document | Element
@@ -95,6 +102,7 @@ const escapeHtml = (value: string) => {
   })
 }
 const init = async () => {
+  isVisible = await getIsVisible()
   const ratePages = await getRatePages()
   showRates(ratePages, document)
   observerInit(ratePages).observe(document, {
@@ -123,6 +131,19 @@ addListener('onMessage', ({ value }, sender, sendResponse) => {
   }
   return true
 })
+addListener('onMessage', ({ value }, sender, sendResponse) => {
+  if (value == onMessageCSEventDefObj.changeQiitaVisible.message) {
+    changeQiitaVisible()
+  }
+  return true
+})
+const changeQiitaVisible = async () => {
+  isVisible = await getIsVisible()
+  isShow = false
+  if (!isVisible) {
+    document.querySelector('.qiitaPosts')?.remove()
+  }
+}
 const observerInit = (ratePages: ratePageType[]) => {
   return new MutationObserver((mutirations) =>
     observerCallBack(ratePages, mutirations)
@@ -155,7 +176,7 @@ window.addEventListener('scroll', async () => {
   const bottomPoint = bodyHeight - windowHeight // ページ最下部までスクロールしたかを判定するための位置を計算
   const currentPos = window.pageYOffset + 1 // スクロール量を取得
   console.log(bottomPoint, currentPos)
-  if (bottomPoint <= currentPos && !isShow) {
+  if (bottomPoint <= currentPos && !isShow && isVisible) {
     isShow = true
     const posts = await getRelativePosts(createQuery(document.title) || '')
     createQiitaPostsElement(posts)

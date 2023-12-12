@@ -91,10 +91,13 @@ const SiteRatingContextProvider = ({ children }: Props) => {
     })
     setIsUpdating(true)
   }
-  const qiitaPostsVisibleSave: qiitaPostsVisibleSaveType = (isVisible) => {
+  const qiitaPostsVisibleSave: qiitaPostsVisibleSaveType = async (
+    isVisible
+  ) => {
     storageValueRef.current = { ...storageValueRef.current, isVisible }
     setIsVisible(isVisible)
     setStorage(storageValueRef.current)
+    await sendMessage<sendMessageType, 'tabs'>('tabs', 'changeQiitaVisible')
   }
   useEffect(() => {
     const isDelete = currentCardExtOption.rate === '0'

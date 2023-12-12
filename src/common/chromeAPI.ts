@@ -1,5 +1,6 @@
 import { getBucket } from '@extend-chrome/storage'
 import { cardBaseOptionArrType } from 'browserAction/contexts/SiteRatingContext'
+import { messageCSUnionType } from 'contentScript'
 import { currentPageObjType, messageBGUnionType } from '../backgroundWorker'
 export type chromeStorageType = {
   storage: cardBaseOptionArrType
@@ -7,7 +8,7 @@ export type chromeStorageType = {
 }
 type messageUnionType = {
   runtime: messageBGUnionType
-  tabs: 'changeCurrentRate'
+  tabs: messageCSUnionType
 }
 type sendMessageResUnionType = {
   runtime: currentPageObjType

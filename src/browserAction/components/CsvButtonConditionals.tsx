@@ -141,10 +141,9 @@ const CsvButtonConditionals = () => {
               event.currentTarget.files = null
               return
             }
-            if (!alert('インポートに成功しました。')) {
-              setStorage({ isVisible, storage: parseCsvLines })
-              location.reload()
-            }
+            alert('インポートに成功しました。')
+            setStorage({ isVisible, storage: parseCsvLines })
+            location.reload()
           }}
         />
         <Button

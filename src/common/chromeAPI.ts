@@ -56,7 +56,8 @@ const chromeApi: chromeApiType.chromeApiType = () => {
   }
   const getStorage: chromeApiType.getStorage = async () => {
     const value = await bucket.get()
-    return value || { storage: [], isVisible: true }
+    const isHasProperty = 'storage' in value && 'isVisible' in value
+    return isHasProperty ? value : { storage: [], isVisible: true }
   }
   const query: chromeApiType.query = (queryInfo, callback) => {
     chrome.tabs.query(queryInfo, (tabs) => {
